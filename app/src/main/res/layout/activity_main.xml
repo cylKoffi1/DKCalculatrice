@@ -141,9 +141,9 @@
             <Button
                 android:id="@+id/btnMinus"
                 style="@style/buttonNumber"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="match_parent"
+                android:layout_weight="@dimen/button_weight"
                 android:text="-" />
         </LinearLayout>
         <!-- Row 4 -->
