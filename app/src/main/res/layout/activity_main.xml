@@ -11,8 +11,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_weight="0.2"
+        android:layout_height="@dimen/button_height"
+        android:layout_weight="@dimen/button_weight"
         android:orientation="horizontal"
         android:layout_marginBottom="20dp">
 
@@ -23,15 +23,15 @@
             android:gravity="end"
             android:importantForAccessibility="no"
             android:inputType="none"
-            android:text="fvfdvevevvrve"
+            android:text="  "
             android:textColor="#fff"
             android:textSize="39sp" />
     </LinearLayout>
         <!-- Row 1 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_weight="0.2"
+            android:layout_height="@dimen/button_height"
+            android:layout_weight="@dimen/button_weight"
             android:orientation="horizontal">
 
 
@@ -71,8 +71,8 @@
         <!-- Row 2 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_weight="0.2"
+            android:layout_height="@dimen/button_height"
+            android:layout_weight="@dimen/button_weight"
             android:orientation="horizontal">
 
             <Button
@@ -110,8 +110,8 @@
         <!-- Row 3 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_weight="0.2"
+            android:layout_height="@dimen/button_height"
+            android:layout_weight="@dimen/button_weight"
             android:orientation="horizontal">
 
             <Button
@@ -149,8 +149,8 @@
         <!-- Row 4 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_weight="0.2"
+            android:layout_height="@dimen/button_height"
+            android:layout_weight="@dimen/button_weight"
             android:orientation="horizontal">
 
             <Button
@@ -188,8 +188,8 @@
         <!-- Row 5 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_weight="0.2"
+            android:layout_height="@dimen/button_height"
+            android:layout_weight="@dimen/button_weight"
             android:orientation="horizontal">
 
             <Button
