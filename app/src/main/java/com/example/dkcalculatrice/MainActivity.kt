@@ -10,14 +10,16 @@ import net.objecthunter.exp4j.ExpressionBuilder
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var etDisplay: EditText
-    private var lastNumeric = false
-    private var lastDot = false
-
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        var nbr1:String=""
+        var nbr2:String=""
+        var operation:String
+        var currentText:String=""
+
 
         //widgets
         val ecran = findViewById<EditText>(R.id.ecran)
@@ -54,11 +56,33 @@ class MainActivity : AppCompatActivity() {
 
         // Modifier l'ecran
         fun ecrire(value: String) {
-            val currentText = ecran.text.toString()
-            ecran.setText(currentText + value)
+
+            currentText = currentText +value
+            ecran.setText(currentText)
+
         }
 
 
+fun operation(value: String){
+
+    //Deux cas de figure
+    //1 c'est la premiere operation sur la lign
+    //2 c'est la deuxieme operation sur la ligne
+
+
+    if (!nbr1.isNotEmpty()){
+        nbr1=currentText
+        ecran.setText(currentText+value)
+        currentText=""
+
+    }else{
+        nbr2=currentText
+    }
+
+    operation=value
+
+
+}
 
 
 
@@ -84,8 +108,18 @@ class MainActivity : AppCompatActivity() {
         div.setOnClickListener { ecrire("/") }
         modulo.setOnClickListener { ecrire("%") }
 
+
+
+
+
+
+
+
 // boutton egale
         egale.setOnClickListener {
+
+
+
         }
 
 // boutton clear
