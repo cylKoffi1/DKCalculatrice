@@ -1,16 +1,16 @@
 package com.example.dkcalculatrice
-
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import net.objecthunter.exp4j.ExpressionBuilder
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var etDisplay: EditText
-    private var lastNumeric = false
-    private var lastDot = false
+    private lateinit var etDisplay: EditText
+    private var currentInput = StringBuilder()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,107 +18,90 @@ class MainActivity : AppCompatActivity() {
 
         etDisplay = findViewById(R.id.etDisplay)
 
-        // Numbers
-        val btnNumbers = listOf(R.id.btnZero, R.id.btnOne, R.id.btnTwo, R.id.btnThree, R.id.btnFour, R.id.btnFive, R.id.btnSix, R.id.btnSeven, R.id.btnEight, R.id.btnNine)
-        btnNumbers.forEach { id ->
-            findViewById<Button>(id).setOnClickListener {
-                onDigitClick((it as Button).text.toString())
+        // Restaurer l'état après la rotation de l'écran
+        if (savedInstanceState != null) {
+            currentInput = StringBuilder(savedInstanceState.getString("currentInput") ?: "")
+            updateDisplay()
+        }
+
+        // Assigner des listeners aux boutons
+        val buttonIds = arrayOf(
+            R.id.btnZero, R.id.btnOne, R.id.btnTwo, R.id.btnThree, R.id.btnFour,
+            R.id.btnFive, R.id.btnSix, R.id.btnSeven, R.id.btnEight, R.id.btnNine,
+            R.id.btnPlus, R.id.btnMinus, R.id.btnMultiply, R.id.btnDivide, R.id.btnModulo,
+            R.id.btnNegate, R.id.btnEquals, R.id.btnClear, R.id.btnDel
+        )
+
+        for (buttonId in buttonIds) {
+            findViewById<Button>(buttonId).setOnClickListener { onButtonClick(it) }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("currentInput", currentInput.toString())
+    }
+
+    private fun onButtonClick(view: View) {
+        when (view.id) {
+            R.id.btnEquals -> evaluateExpression()
+            R.id.btnClear -> clearDisplay()
+            R.id.btnDel -> deleteLastCharacter()
+            R.id.btnNegate -> negateLastNumber()
+            else -> appendToDisplay((view as Button).text.toString())
+        }
+    }
+
+    private fun appendToDisplay(value: String) {
+        currentInput.append(value)
+        updateDisplay()
+    }
+
+    private fun updateDisplay() {
+        etDisplay.text = currentInput.toString().toEditable()
+    }
+
+    private fun CharSequence.toEditable(): Editable =
+        Editable.Factory.getInstance().newEditable(this)
+
+    private fun clearDisplay() {
+        currentInput.clear()
+        updateDisplay()
+    }
+
+    private fun deleteLastCharacter() {
+        if (currentInput.isNotEmpty()) {
+            currentInput.deleteCharAt(currentInput.length - 1)
+            updateDisplay()
+        }
+    }
+
+    private fun negateLastNumber() {
+        if (currentInput.isNotEmpty()) {
+            val lastChar = currentInput[currentInput.length - 1]
+            if (lastChar.isDigit()) {
+                currentInput.deleteCharAt(currentInput.length - 1)
+                currentInput.insert(0, "-$lastChar")
+                updateDisplay()
             }
-        }
-
-        // Operations
-        val btnOperations = listOf(R.id.btnPlus, R.id.btnModulo, R.id.btnMultiply, R.id.btnDivide, R.id.btnMinus)
-        btnOperations.forEach { id ->
-            findViewById<Button>(id).setOnClickListener {
-                onOperationClick((it as Button).text.toString())
-            }
-        }
-
-        findViewById<Button>(R.id.btnDot).setOnClickListener {
-            onDotClick()
-        }
-
-        findViewById<Button>(R.id.btnEquals).setOnClickListener {
-            onEqualsClick()
-        }
-
-        findViewById<Button>(R.id.btnClear).setOnClickListener {
-            onClearClick()
-        }
-
-        findViewById<Button>(R.id.btnNegate).setOnClickListener {
-            onNegateClick()
-        }
-
-        findViewById<Button>(R.id.btnDel).setOnClickListener {
-            onDeleteClick()
-        }
-    }
-
-    private fun onDigitClick(digit: String) {
-        if (lastNumeric) {
-            etDisplay.append(digit)
-        } else {
-            etDisplay.text.clear()
-            etDisplay.append(digit)
-            lastNumeric = true
-        }
-        lastDot = false
-    }
-
-    private fun onOperationClick(operation: String) {
-        if (lastNumeric && !lastDot) {
-            etDisplay.append(operation)
-            lastNumeric = false
-        }
-    }
-
-    private fun onDotClick() {
-        if (lastNumeric && !lastDot) {
-            etDisplay.append(".")
-            lastNumeric = false
-            lastDot = true
-        }
-    }
-
-    private fun onEqualsClick() {
-        if (lastNumeric && !lastDot) {
-            evaluateExpression()
-            lastDot = false
-        }
-    }
-
-    private fun onClearClick() {
-        etDisplay.text.clear()
-        lastNumeric = false
-        lastDot = false
-    }
-
-    private fun onNegateClick() {
-        val currentText = etDisplay.text.toString()
-        if (currentText.isNotEmpty() && currentText.last().isDigit()) {
-            etDisplay.text.clear()
-            val negatedValue = if (currentText.startsWith("-")) {
-                currentText.substring(1)
-            } else {
-                "-$currentText"
-            }
-            etDisplay.append(negatedValue)
-        }
-    }
-
-    private fun onDeleteClick() {
-        val currentText = etDisplay.text.toString()
-        if (currentText.isNotEmpty()) {
-            etDisplay.setText(currentText.dropLast(1))
         }
     }
 
     private fun evaluateExpression() {
-        val text = etDisplay.text.toString()
-        val expression = ExpressionBuilder(text).build()
-        val result = expression.evaluate()
-        etDisplay.text.clear()
-        etDisplay.append(result.toString())
+        try {
+            val result = ExpressionBuilder(currentInput.toString())
+                .build()
+                .evaluate()
+
+            clearDisplay()
+            currentInput.append(result)
+            updateDisplay()
+
+        } catch (e: ArithmeticException) {
+            // Gérer les erreurs d'expression invalide ici
+            clearDisplay()
+            currentInput.append("Error")
+            updateDisplay()
+        }
     }
 }
