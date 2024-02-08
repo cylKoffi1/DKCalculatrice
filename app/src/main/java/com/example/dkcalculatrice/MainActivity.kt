@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                 ecran.setText(nbr1)
 
 
-            }else{
+            }else{  
 
                 nbr2+=value
                 ecran.setText(nbr1+operation+nbr2)
