@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         fun ecrire(value: String) {
 
             if (operation==""){
-                nbr1=currentText+value
+                nbr1+=value
                 ecran.setText(nbr1)
 
 
